@@ -4,21 +4,24 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <windows.h>
 
 #define GAME_SET_SCORE 3
+#define BOARD_SIZE 5
 
 void Init();
 void printBoard();
 void deleteNumber(int num);
 int checkBingo();
 int userInput();
+void consoleClear();
 
 // ┌┬┐
 // ├┼┤
 // └┴┘
 // ─│
 
-int BOARD[5][5] = { 0, };
+int BOARD[BOARD_SIZE][BOARD_SIZE] = { 0, };
 
 //int BOARD[5][5] = {
 //	 1, 2, 3, 4, 5,
@@ -41,29 +44,30 @@ int main()
 	{
 		deleteNumber(userInput());
 
+		consoleClear();
+
 		printBoard();
 
 		bingoLine = checkBingo();
 
 		if (bingoLine > 0)
 			printf("%d 줄 Bingo!!\n", bingoLine);
+	} while (bingoLine < GAME_SET_SCORE);
 
-		printf("\n");
-	}
-	while (bingoLine < GAME_SET_SCORE);
+	return 0;
 }
 
 void Init()
 {
-	int used[25] = { 0, };
+	int used[BOARD_SIZE * BOARD_SIZE] = { 0, };
 	int	num, flug;
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < BOARD_SIZE; j++)
 		{
 			flug = 0;
-			num = rand() % 25 + 1;
+			num = rand() % (BOARD_SIZE * BOARD_SIZE) + 1;
 
 			if (used[num - 1] == 1)
 			{
@@ -79,11 +83,16 @@ void Init()
 
 void printBoard()
 {
-	printf("┌───┬───┬───┬───┬───┐\n");
-
-	for (int i = 0; i < 5; i++)
+	printf("┌");
+	for (int i = 0; i < BOARD_SIZE - 1; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		printf("───┬");
+	}
+	printf("───┐\n");
+
+	for (int i = 0; i < BOARD_SIZE; i++)
+	{
+		for (int j = 0; j < BOARD_SIZE; j++)
 		{
 			if (BOARD[i][j] < 10)
 			{
@@ -92,25 +101,39 @@ void printBoard()
 				else
 					printf("│  %d", BOARD[i][j]);
 			}
-			else
+			else if (BOARD[i][j] < 100)
 				printf("│ %d", BOARD[i][j]);
+			else
+				printf("│%d", BOARD[i][j]);
 
-			if (j == 4)
+			if (j == BOARD_SIZE - 1)
 				printf("│");
 		}
 
-		if (i != 4)
-			printf("\n├───┼───┼───┼───┼───┤\n");
+		if (i != BOARD_SIZE - 1)
+		{
+			printf("\n├");
+			for (int i = 0; i < BOARD_SIZE - 1; i++)
+			{
+				printf("───┼");
+			}
+			printf("───┤\n");
+		}
 	}
 
-	printf("\n└───┴───┴───┴───┴───┘\n");
+	printf("\n└");
+	for (int i = 0; i < BOARD_SIZE - 1; i++)
+	{
+		printf("───┴");
+	}
+	printf("───┘\n");
 }
 
 void deleteNumber(int num)
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < BOARD_SIZE; j++)
 		{
 			if (BOARD[i][j] == num)
 			{
@@ -127,9 +150,9 @@ int checkBingo()
 	int flug = 0;
 
 	// 가로줄 빙고 체크
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < BOARD_SIZE; j++)
 		{
 			if (BOARD[i][j] != 0)
 			{
@@ -145,9 +168,9 @@ int checkBingo()
 	}
 
 	// 세로줄 빙고 체크
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < BOARD_SIZE; j++)
 		{
 			if (BOARD[j][i] != 0)
 			{
@@ -163,7 +186,7 @@ int checkBingo()
 	}
 
 	// \ 대각선 빙고 체크
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
 		if (BOARD[i][i] != 0)
 		{
@@ -178,11 +201,11 @@ int checkBingo()
 	flug = 0;
 
 	// / 대각선 빙고 체크
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j = 5 - 1; j >= 0; j--)
+		for (int j = BOARD_SIZE - 1; j >= 0; j--)
 		{
-			if (i + j == 4 && BOARD[i][j] != 0)
+			if (i + j == BOARD_SIZE - 1 && BOARD[i][j] != 0)
 			{
 				flug = 1;
 				break;
@@ -198,8 +221,13 @@ int checkBingo()
 
 int userInput()
 {
-	int num;
+	int num = 0;
 	printf("지울 번호를 입력하세요: ");
 	scanf("%d", &num);
 	return num;
+}
+
+void consoleClear()
+{
+	system("cls");
 }
