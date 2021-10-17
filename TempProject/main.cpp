@@ -7,9 +7,10 @@
 #include <windows.h>
 
 #define GAME_SET_SCORE 3
-#define BOARD_SIZE 5
+#define BOARD_SIZE 10
+#define USE_RANDOM_BOARD 0
 
-void Init();
+void Init(int useRandom);
 void printBoard();
 void deleteNumber(int num);
 int checkBingo();
@@ -23,21 +24,13 @@ void consoleClear();
 
 int BOARD[BOARD_SIZE][BOARD_SIZE] = { 0, };
 
-//int BOARD[5][5] = {
-//	 1, 2, 3, 4, 5,
-//	 6, 7, 8, 9,10,
-//	11,12,13,14,15,
-//	16,17,18,19,20,
-//	21,22,23,24,25
-//};
-
 int main()
 {
 	srand(time(NULL));
 
 	int bingoLine = 0;
 
-	Init();
+	Init(USE_RANDOM_BOARD);
 	printBoard();
 
 	do
@@ -57,26 +50,39 @@ int main()
 	return 0;
 }
 
-void Init()
+void Init(int useRandom)
 {
-	int used[BOARD_SIZE * BOARD_SIZE] = { 0, };
-	int	num, flug;
-
-	for (int i = 0; i < BOARD_SIZE; i++)
+	if (useRandom == 1)
 	{
-		for (int j = 0; j < BOARD_SIZE; j++)
+		int used[BOARD_SIZE * BOARD_SIZE] = { 0, };
+		int	num, flug;
+
+		for (int i = 0; i < BOARD_SIZE; i++)
 		{
-			flug = 0;
-			num = rand() % (BOARD_SIZE * BOARD_SIZE) + 1;
-
-			if (used[num - 1] == 1)
+			for (int j = 0; j < BOARD_SIZE; j++)
 			{
-				j--;
-				continue;
-			}
+				flug = 0;
+				num = rand() % (BOARD_SIZE * BOARD_SIZE) + 1;
 
-			BOARD[i][j] = num;
-			used[num - 1] = 1;
+				if (used[num - 1] == 1)
+				{
+					j--;
+					continue;
+				}
+
+				BOARD[i][j] = num;
+				used[num - 1] = 1;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < BOARD_SIZE; i++)
+		{
+			for (int j = 0; j < BOARD_SIZE; j++)
+			{
+				BOARD[i][j] = i * BOARD_SIZE + j + 1;
+			}
 		}
 	}
 }
