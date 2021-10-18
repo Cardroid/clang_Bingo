@@ -7,10 +7,10 @@
 #include <windows.h>
 
 #define GAME_SET_SCORE 3
-#define BOARD_SIZE 10
-#define USE_RANDOM_BOARD 0
+#define BOARD_SIZE 5 // 31까지 화면 출력을 정상적으로 지원
+#define USE_RANDOM_BOARD 2
 
-void Init(int useRandom);
+void init(int useRandom);
 void printBoard();
 void deleteNumber(int num);
 int checkBingo();
@@ -30,7 +30,7 @@ int main()
 
 	int bingoLine = 0;
 
-	Init(USE_RANDOM_BOARD);
+	init(USE_RANDOM_BOARD);
 	printBoard();
 
 	do
@@ -50,7 +50,7 @@ int main()
 	return 0;
 }
 
-void Init(int useRandom)
+void init(int useRandom)
 {
 	if (useRandom == 1)
 	{
@@ -82,6 +82,22 @@ void Init(int useRandom)
 			for (int j = 0; j < BOARD_SIZE; j++)
 			{
 				BOARD[i][j] = i * BOARD_SIZE + j + 1;
+			}
+		}
+
+		if (useRandom == 2)
+		{
+			int count = BOARD_SIZE * BOARD_SIZE;
+			for (int i = 0; i < count; i++)
+			{
+				int p1 = rand() % BOARD_SIZE;
+				int p2 = rand() % BOARD_SIZE;
+				int q1 = rand() % BOARD_SIZE;
+				int q2 = rand() % BOARD_SIZE;
+
+				int temp = BOARD[p1][p2];
+				BOARD[p1][p2] = BOARD[q1][q2];
+				BOARD[q1][q2] = temp;
 			}
 		}
 	}
@@ -209,13 +225,10 @@ int checkBingo()
 	// / 대각선 빙고 체크
 	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j = BOARD_SIZE - 1; j >= 0; j--)
+		if (BOARD[BOARD_SIZE - 1 - i][i] != 0)
 		{
-			if (i + j == BOARD_SIZE - 1 && BOARD[i][j] != 0)
-			{
-				flug = 1;
-				break;
-			}
+			flug = 1;
+			break;
 		}
 	}
 
